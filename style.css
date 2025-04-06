@@ -1,0 +1,160 @@
+:root {
+    --bg-color: #f2f2f2;
+    --text-color: #000;
+    --panel-bg: white;
+    --panel-hover: #e0e0e0;
+    --title-bg: #333;
+    --title-color: white;
+  }
+  
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--text-color);
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  .dark-mode {
+    --bg-color: #121212;
+    --text-color: #f9f9f9;
+    --panel-bg: #1e1e1e;
+    --panel-hover: #333;
+    --title-bg: #000;
+    --title-color: #f9f9f9;
+  }
+  
+  .title {
+    background-color: var(--title-bg);
+    color: var(--title-color);
+    padding: 20px 0;
+    margin: 0;
+  }
+  
+  .panel-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 40px;
+    gap: 30px;
+  }
+  
+  .panel {
+    background-color: var(--panel-bg);
+    border-radius: 10px;
+    padding: 40px;
+    width: 250px;
+    text-decoration: none;
+    font-size: 18px;
+    color: var(--text-color);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: 0.3s;
+  }
+  
+  .panel:hover {
+    background-color: var(--panel-hover);
+  }
+  
+  .calculator, .converter {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background: var(--panel-bg);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+  
+  input, select {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    padding: 15px 20px;
+    font-size: 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+  }
+  
+  button:hover {
+    background-color: #0b7dda;
+  }
+  
+  #history {
+    margin-top: 20px;
+    max-height: 150px;
+    overflow-y: auto;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: var(--panel-hover);
+    border-radius: 10px;
+    color: var(--text-color);
+  }
+  
+  .mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #444;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; 
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: 0.3s;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  select, option {
+    font-size: 18px;
+    padding: 8px;
+  }
+  
+  @media screen and (max-width: 500px) {
+    .calculator, .converter {
+      width: 95%;
+    }
+    button {
+      width: 22%;
+      margin: 2%;
+      font-size: 16px;
+    }
+  }
+  

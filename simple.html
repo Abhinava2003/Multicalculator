@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .calculator {
+      margin-top: 30px;
+      background-color: #222;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      max-width: 320px;
+      width: 90%;
+    }
+
+    .display {
+      background-color: #000;
+      color: #0f0;
+      font-size: 32px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: right;
+      overflow-x: auto;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      padding: 20px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #333;
+      color: white;
+      transition: 0.2s;
+    }
+
+    .buttons button:hover {
+      background-color: #555;
+    }
+
+    .buttons .equal {
+      background-color: #ff9500;
+    }
+
+    .buttons .equal:hover {
+      background-color: #e08900;
+    }
+
+    .buttons .clear {
+      background-color: #ff3b30;
+    }
+
+    .buttons .clear:hover {
+      background-color: #e03129;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Simple Calculator</h1>
+
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('÷')">÷</button>
+
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('×')">×</button>
+
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">−</button>
+
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button onclick="press('√')">√</button>
+      <button onclick="press('+')">+</button>
+
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="backspace()">←</button>
+      <button class="equal" colspan="2" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+
+    function press(val) {
+      if (display.innerText === "0" || display.innerText === "Error") {
+        display.innerText = val === "√" ? "√(" : val;
+      } else {
+        if (val === "√") {
+          display.innerText += "√(";
+        } else {
+          display.innerText += val;
+        }
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = "0";
+    }
+
+    function backspace() {
+      if (display.innerText.length > 1) {
+        display.innerText = display.innerText.slice(0, -1);
+      } else {
+        display.innerText = "0";
+      }
+    }
+
+    function calculate() {
+      let expression = display.innerText
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/−/g, "-")
+        .replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)');
+
+      try {
+        let result = eval(expression);
+        display.innerText = result;
+      } catch {
+        display.innerText = "Error";
+      }
+    }
+
+    // Optional: support Enter key
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") calculate();
+    });
+  </script>
+</body>
+</html>

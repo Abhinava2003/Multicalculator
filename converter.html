@@ -1,0 +1,169 @@
+<!-- multi-calculator/converter.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Converter</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .converter-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007BFF;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Unit Converter</h1>
+
+  <div class="converter-container">
+    <label for="conversionType">Choose Conversion Type:</label>
+    <select id="conversionType">
+      <option value="temp">Temperature (C ↔ F)</option>
+      <option value="length">Length (m, km, mile)</option>
+      <option value="area">Area (m², km², hectare)</option>
+      <option value="currency">Currency (USD, INR, EUR)</option>
+      <option value="weight">Weight (g, kg, lb)</option>
+    </select>
+
+    <label for="inputValue">Enter Value:</label>
+    <input type="number" id="inputValue" placeholder="Enter value" />
+
+    <label for="fromUnit">From Unit:</label>
+    <select id="fromUnit"></select>
+
+    <label for="toUnit">To Unit:</label>
+    <select id="toUnit"></select>
+
+    <button onclick="convert()">Convert</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const unitOptions = {
+      temp: ["Celsius", "Fahrenheit"],
+      length: ["Meter", "Kilometer", "Mile"],
+      area: ["Sq.Meter", "Sq.Kilometer", "Hectare"],
+      currency: ["USD", "INR", "EUR"],
+      weight: ["Gram", "Kilogram", "Pound"]
+    };
+
+    const fromUnit = document.getElementById("fromUnit");
+    const toUnit = document.getElementById("toUnit");
+    const typeSelect = document.getElementById("conversionType");
+
+    function populateUnits() {
+      const type = typeSelect.value;
+      fromUnit.innerHTML = "";
+      toUnit.innerHTML = "";
+      unitOptions[type].forEach(unit => {
+        fromUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+        toUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+      });
+    }
+
+    function convert() {
+      const type = typeSelect.value;
+      const val = parseFloat(document.getElementById("inputValue").value);
+      const from = fromUnit.value;
+      const to = toUnit.value;
+      let result = "Invalid conversion.";
+
+      if (isNaN(val)) {
+        document.getElementById("result").innerText = "Please enter a valid number.";
+        return;
+      }
+
+      // Temperature
+      if (type === "temp") {
+        if (from === "Celsius" && to === "Fahrenheit") result = (val * 9/5) + 32;
+        else if (from === "Fahrenheit" && to === "Celsius") result = (val - 32) * 5/9;
+        else result = val;
+      }
+
+      // Length
+      else if (type === "length") {
+        const lengthFactors = {
+          Meter: 1,
+          Kilometer: 1000,
+          Mile: 1609.34
+        };
+        result = val * lengthFactors[from] / lengthFactors[to];
+      }
+
+      // Area
+      else if (type === "area") {
+        const areaFactors = {
+          "Sq.Meter": 1,
+          "Sq.Kilometer": 1_000_000,
+          "Hectare": 10_000
+        };
+        result = val * areaFactors[from] / areaFactors[to];
+      }
+
+      // Currency (Mock)
+      else if (type === "currency") {
+        const currencyRates = {
+          USD: 1,
+          INR: 83,
+          EUR: 0.91
+        };
+        result = val * currencyRates[from] / currencyRates[to];
+      }
+
+      // Weight
+      else if (type === "weight") {
+        const weightFactors = {
+          Gram: 1,
+          Kilogram: 1000,
+          Pound: 453.592
+        };
+        result = val * weightFactors[from] / weightFactors[to];
+      }
+
+      document.getElementById("result").innerText = `${val} ${from} = ${result.toFixed(4)} ${to}`;
+    }
+
+    typeSelect.addEventListener("change", populateUnits);
+    window.onload = populateUnits;
+  </script>
+</body>
+</html>

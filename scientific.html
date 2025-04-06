@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        
+        .calculator {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            width: 380px;
+        }
+        
+        .display {
+            background-color: #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: right;
+            font-size: 24px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .history {
+            font-size: 14px;
+            color: #666;
+            height: 18px;
+            overflow: hidden;
+        }
+        
+        .mode-display {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 8px;
+        }
+        
+        button {
+            border: none;
+            border-radius: 5px;
+            padding: 12px 0;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #555;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background-color: #777;
+        }
+        
+        button:active {
+            background-color: #999;
+        }
+        
+        .operator {
+            background-color: #ff9500;
+        }
+        
+        .operator:hover {
+            background-color: #ffaa33;
+        }
+        
+        .operator:active {
+            background-color: #ffbb55;
+        }
+        
+        .clear {
+            background-color: #a5a5a5;
+            color: black;
+        }
+        
+        .clear:hover {
+            background-color: #bbb;
+        }
+        
+        .clear:active {
+            background-color: #ddd;
+        }
+        
+        .scientific {
+            background-color: #4a4a4a;
+        }
+        
+        .shift {
+            background-color: #3a3a3a;
+        }
+        
+        .shift-active {
+            background-color: #6a6a6a;
+        }
+        
+        .mode {
+            background-color: #2a2a2a;
+        }
+        
+        .double-wide {
+            grid-column: span 2;
+        }
+        
+        .active-mode {
+            background-color: #5a5a5a;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        
+        .menu {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .menu-content {
+            display: none;
+            position: absolute;
+            background-color: #444;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            bottom: 100%;
+            left: 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .menu:hover .menu-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .menu-item {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .menu-item:hover {
+            background-color: #666;
+        }
+        
+        .base-btn {
+            background-color: #3a4a5a;
+        }
+        
+        .base-active {
+            background-color: #5a7a9a;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="mode-display" id="modeDisplay">COMP DEC</div>
+            <div class="history" id="history"></div>
+            <div id="display">0</div>
+        </div>
+        <div class="buttons">
+            <!-- Mode Selection Row -->
+            <button class="mode active-mode" onclick="setMode('comp')">COMP</button>
+            <button class="mode" onclick="setMode('stat')">STAT</button>
+            <button class="mode base-btn" onclick="setMode('base')">BASE</button>
+            <button class="mode" onclick="setMode('matrix')">MAT</button>
+            <button class="mode" onclick="setMode('vector')">VEC</button>
+            
+            <!-- Main Calculator Buttons -->
+            <button class="shift" id="shiftBtn" onclick="toggleShift()">Shift</button>
+            <button class="clear" onclick="clearAll()">AC</button>
+            <button class="clear" onclick="backspace()">⌫</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <!-- Row 1 -->
+            <button class="scientific shift-func" onclick="calculateFunction('sin')">sin</button>
+            <button class="scientific" onclick="calculateFunction('sinh')">sinh</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <!-- Row 2 -->
+            <button class="scientific shift-func" onclick="calculateFunction('cos')">cos</button>
+            <button class="scientific" onclick="calculateFunction('cosh')">cosh</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <!-- Row 3 -->
+            <button class="scientific shift-func" onclick="calculateFunction('tan')">tan</button>
+            <button class="scientific" onclick="calculateFunction('tanh')">tanh</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator equals" onclick="calculate()">=</button>
+            
+            <!-- Row 4 -->
+            <button class="scientific shift-func" onclick="calculateFunction('log')">log</button>
+            <button class="scientific" onclick="calculateFunction('ln')">ln</button>
+            <button class="double-wide" onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button class="operator" onclick="calculate()">=</button>
+            
+            <!-- Row 5 -->
+            <button class="scientific shift-func" onclick="calculateFunction('√')">√</button>
+            <button class="scientific" onclick="calculatePower(2)">x²</button>
+            <button class="scientific" onclick="calculatePower(3)">x³</button>
+            <button class="scientific" onclick="calculateFunction('^')">x^y</button>
+            <button class="scientific" onclick="calculateFunction('10^')">10^x</button>
+            
+            <!-- Row 6 -->
+            <button class="scientific shift-func" onclick="calculateFunction('asin')">sin⁻¹</button>
+            <button class="scientific shift-func" onclick="calculateFunction('acos')">cos⁻¹</button>
+            <button class="scientific shift-func" onclick="calculateFunction('atan')">tan⁻¹</button>
+            <button class="scientific" onclick="appendConstant('π')">π</button>
+            <button class="scientific" onclick="appendConstant('e')">e</button>
+            
+            <!-- Row 7 -->
+            <button class="scientific shift-func" onclick="calculateFunction('rand')">RAND</button>
+            <button class="scientific" onclick="factorial()">n!</button>
+            <button class="scientific shift-func" onclick="toggleAngleMode()" id="angleModeBtn">DEG</button>
+            <button class="scientific menu">
+                CALC
+                <div class="menu-content">
+                    <div class="menu-item" onclick="derivative()">d/dx</div>
+                    <div class="menu-item" onclick="integral()">∫dx</div>
+                    <div class="menu-item" onclick="solveEquation()">SOLVE</div>
+                    <div class="menu-item" onclick="limit()">LIMIT</div>
+                    <div class="menu-item" onclick="taylorSeries()">TAYLOR</div>
+                </div>
+            </button>
+            <button class="scientific" onclick="calculateFunction('e^')">e^x</button>
+            
+            <!-- Row 8 - Advanced Functions -->
+            <button class="scientific menu">
+                STAT
+                <div class="menu-content">
+                    <div class="menu-item" onclick="statFunction('mean')">MEAN</div>
+                    <div class="menu-item" onclick="statFunction('median')">MEDIAN</div>
+                    <div class="menu-item" onclick="statFunction('stddev')">STDDEV</div>
+                    <div class="menu-item" onclick="statFunction('var')">VAR</div>
+                    <div class="menu-item" onclick="statFunction('sum')">SUM</div>
+                    <div class="menu-item" onclick="statFunction('prod')">PROD</div>
+                    <div class="menu-item" onclick="enterData()">DATA</div>
+                </div>
+            </button>
+            <button class="scientific menu">
+                MAT
+                <div class="menu-content">
+                    <div class="menu-item" onclick="matrixFunction('det')">DET</div>
+                    <div class="menu-item" onclick="matrixFunction('inv')">INV</div>
+                    <div class="menu-item" onclick="matrixFunction('trans')">TRANS</div>
+                    <div class="menu-item" onclick="matrixFunction('mult')">MULT</div>
+                    <div class="menu-item" onclick="matrixFunction('add')">ADD</div>
+                    <div class="menu-item" onclick="matrixFunction('dot')">DOT</div>
+                    <div class="menu-item" onclick="enterMatrix()">ENTER</div>
+                </div>
+            </button>
+            <button class="scientific menu">
+                VEC
+                <div class="menu-content">
+                    <div class="menu-item" onclick="vectorFunction('mag')">MAG</div>
+                    <div class="menu-item" onclick="vectorFunction('dot')">DOT</div>
+                    <div class="menu-item" onclick="vectorFunction('cross')">CROSS</div>
+                    <div class="menu-item" onclick="vectorFunction('angle')">ANGLE</div>
+                    <div class="menu-item" onclick="enterVector()">ENTER</div>
+                </div>
+            </button>
+            <button class="scientific menu base-btn" id="baseMenu">
+                BASE
+                <div class="menu-content">
+                    <div class="menu-item" onclick="setBase('BIN')">BIN</div>
+                    <div class="menu-item" onclick="setBase('OCT')">OCT</div>
+                    <div class="menu-item" onclick="setBase('DEC')">DEC</div>
+                    <div class="menu-item" onclick="setBase('HEX')">HEX</div>
+                    <div class="menu-item" onclick="convertBase()">CONVERT</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Calculator state
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let resetScreen = false;
+        let shiftActive = false;
+        let angleMode = 'DEG';
+        let currentMode = 'comp';
+        let currentBase = 'DEC';
+        
+        // Data storage
+        let statData = [];
+        let matrixA = [];
+        let matrixB = [];
+        let vectorA = [];
+        let vectorB = [];
+        
+        // DOM elements
+        const display = document.getElementById('display');
+        const historyDisplay = document.getElementById('history');
+        const modeDisplay = document.getElementById('modeDisplay');
+        const shiftBtn = document.getElementById('shiftBtn');
+        const angleModeBtn = document.getElementById('angleModeBtn');
+        const baseMenu = document.getElementById('baseMenu');
+        
+        // Initialize display
+        updateDisplay();
+        
+        // Helper functions
+        function updateDisplay() {
+            display.textContent = currentInput;
+            modeDisplay.textContent = `${currentMode.toUpperCase()} ${currentBase}`;
+        }
+        
+        function appendNumber(number) {
+            if (currentInput === '0' || resetScreen) {
+                currentInput = number;
+                resetScreen = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+        
+        function appendDecimal() {
+            if (resetScreen) {
+                currentInput = '0.';
+                resetScreen = false;
+                updateDisplay();
+                return;
+            }
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+        
+        function appendOperator(op) {
+            if (operation !== null) calculate();
+            previousInput = currentInput;
+            operation = op;
+            resetScreen = true;
+            historyDisplay.textContent = `${previousInput} ${operation}`;
+        }
+        
+        function appendConstant(constant) {
+            if (resetScreen) {
+                currentInput = constant === 'π' ? Math.PI.toString() : Math.E.toString();
+                resetScreen = false;
+            } else {
+                currentInput += constant === 'π' ? Math.PI.toString() : Math.E.toString();
+            }
+            updateDisplay();
+        }
+        
+        function calculate() {
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev)) return;
+            
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = result.toString();
+            operation = null;
+            previousInput = '';
+            resetScreen = true;
+            historyDisplay.textContent = '';
+            updateDisplay();
+        }
+        
+        function clearAll() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            historyDisplay.textContent = '';
+            updateDisplay();
+        }
+        
+        function backspace() {
+            if (currentInput.length === 1 || (currentInput.length === 2 && currentInput.startsWith('-'))) {
+                currentInput = '0';
+            } else {
+                currentInput = currentInput.slice(0, -1);
+            }
+            updateDisplay();
+        }
+        
+        function toggleShift() {
+            shiftActive = !shiftActive;
+            shiftBtn.classList.toggle('shift-active');
+            updateDisplay();
+        }
+        
+        function toggleAngleMode() {
+            angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG';
+            angleModeBtn.textContent = angleMode;
+        }
+        
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode').forEach(btn => {
+                btn.classList.remove('active-mode');
+            });
+            event.target.classList.add('active-mode');
+            updateDisplay();
+        }
+        
+        function setBase(base) {
+            currentBase = base;
+            baseMenu.classList.remove('base-active');
+            if (base !== 'DEC') {
+                baseMenu.classList.add('base-active');
+            }
+            updateDisplay();
+        }
+        
+        function calculatePower(power) {
+            const num = parseFloat(currentInput);
+            if (isNaN(num)) return;
+            
+            const result = Math.pow(num, power);
+            currentInput = result.toString();
+            updateDisplay();
+            resetScreen = true;
+        }
+        
+        // Calculus functions
+        function derivative() {
+            // Simple numerical differentiation
+            const x = parseFloat(currentInput);
+            const h = 0.0001;
+            // Example: derivative of sin(x) at point x
+            const derivative = (Math.sin(x + h) - Math.sin(x)) / h;
+            currentInput = derivative.toFixed(6);
+            updateDisplay();
+        }
+        
+        function integral() {
+            // Simple numerical integration (trapezoidal rule)
+            const a = 0; // lower limit
+            const b = parseFloat(currentInput); // upper limit
+            const n = 1000; // steps
+            const h = (b - a) / n;
+            let sum = 0;
+            
+            // Example: integral of e^x from 0 to b
+            for (let i = 0; i <= n; i++) {
+                const x = a + i * h;
+                const y = Math.exp(x);
+                if (i === 0 || i === n) {
+                    sum += y;
+                } else {
+                    sum += 2 * y;
+                }
+            }
+            
+            currentInput = (sum * h / 2).toFixed(6);
+            updateDisplay();
+        }
+        
+        function solveEquation() {
+            // Simple equation solver (Newton's method for x^2 = a)
+            const a = parseFloat(currentInput);
+            if (a < 0) {
+                currentInput = 'No real solution';
+                updateDisplay();
+                return;
+            }
+            
+            let x = a / 2; // Initial guess
+            for (let i = 0; i < 10; i++) {
+                x = x - (x*x - a)/(2*x);
+            }
+            
+            currentInput = x.toFixed(6);
+            updateDisplay();
+        }
+        
+        function limit() {
+            // Simple limit calculation
+            currentInput = "Limit feature";
+            updateDisplay();
+        }
+        
+        function taylorSeries() {
+            // Taylor series approximation
+            currentInput = "Taylor series";
+            updateDisplay();
+        }
+        
+        // Statistics functions
+        function enterData() {
+            if (currentMode !== 'stat') {
+                setMode('stat');
+            }
+            if (currentInput !== '0') {
+                statData.push(parseFloat(currentInput));
+                currentInput = '0';
+                updateDisplay();
+            }
+        }
+        
+        function statFunction(func) {
+            if (statData.length === 0 && currentInput !== '0') {
+                enterData();
+            }
+            
+            if (statData.length === 0) {
+                currentInput = 'No data';
+                updateDisplay();
+                return;
+            }
+            
+            let result;
+            switch (func) {
+                case 'mean':
+                    result = statData.reduce((a, b) => a + b, 0) / statData.length;
+                    break;
+                case 'median':
+                    const sorted = [...statData].sort((a, b) => a - b);
+                    const mid = Math.floor(sorted.length / 2);
+                    result = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+                    break;
+                case 'stddev':
+                    const mean = statData.reduce((a, b) => a + b, 0) / statData.length;
+                    result = Math.sqrt(statData.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / statData.length);
+                    break;
+                case 'var':
+                    const mean2 = statData.reduce((a, b) => a + b, 0) / statData.length;
+                    result = statData.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b, 0) / statData.length;
+                    break;
+                case 'sum':
+                    result = statData.reduce((a, b) => a + b, 0);
+                    break;
+                case 'prod':
+                    result = statData.reduce((a, b) => a * b, 1);
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = result.toString();
+            updateDisplay();
+        }
+        
+        // Matrix functions
+        function enterMatrix() {
+            currentInput = "Matrix entry";
+            updateDisplay();
+        }
+        
+        function matrixFunction(func) {
+            currentInput = `Matrix ${func}`;
+            updateDisplay();
+        }
+        
+        // Vector functions
+        function enterVector() {
+            currentInput = "Vector entry";
+            updateDisplay();
+        }
+        
+        function vectorFunction(func) {
+            currentInput = `Vector ${func}`;
+            updateDisplay();
+        }
+        
+        // Base conversion
+        function convertBase() {
+            const num = parseInt(currentInput);
+            if (isNaN(num)) return;
+            
+            let result;
+            switch (currentBase) {
+                case 'BIN':
+                    result = num.toString(2);
+                    break;
+                case 'OCT':
+                    result = num.toString(8);
+                    break;
+                case 'HEX':
+                    result = num.toString(16).toUpperCase();
+                    break;
+                default: // DEC
+                    return;
+            }
+            
+            currentInput = result;
+            updateDisplay();
+        }
+        
+        function factorial() {
+            let num = parseInt(currentInput);
+            if (num < 0) {
+                currentInput = 'Error';
+                updateDisplay();
+                return;
+            }
+            let result = 1;
+            for (let i = 2; i <= num; i++) {
+                result *= i;
+            }
+            currentInput = result.toString();
+            updateDisplay();
+            resetScreen = true;
+        }
+        
+        function calculateFunction(func) {
+            let inputValue = parseFloat(currentInput);
+            let result;
+            
+            switch (func) {
+                case 'sin':
+                    result = angleMode === 'DEG' ? Math.sin(inputValue * Math.PI / 180) : Math.sin(inputValue);
+                    break;
+                case 'cos':
+                    result = angleMode === 'DEG' ? Math.cos(inputValue * Math.PI / 180) : Math.cos(inputValue);
+                    break;
+                case 'tan':
+                    result = angleMode === 'DEG' ? Math.tan(inputValue * Math.PI / 180) : Math.tan(inputValue);
+                    break;
+                case 'asin':
+                    result = angleMode === 'DEG' ? Math.asin(inputValue) * 180 / Math.PI : Math.asin(inputValue);
+                    break;
+                case 'acos':
+                    result = angleMode === 'DEG' ? Math.acos(inputValue) * 180 / Math.PI : Math.acos(inputValue);
+                    break;
+                case 'atan':
+                    result = angleMode === 'DEG' ? Math.atan(inputValue) * 180 / Math.PI : Math.atan(inputValue);
+                    break;
+                case 'sinh':
+                    result = Math.sinh(inputValue);
+                    break;
+                case 'cosh':
+                    result = Math.cosh(inputValue);
+                    break;
+                case 'tanh':
+                    result = Math.tanh(inputValue);
+                    break;
+                case 'log':
+                    result = Math.log10(inputValue);
+                    break;
+                case 'ln':
+                    result = Math.log(inputValue);
+                    break;
+                case '√':
+                    result = Math.sqrt(inputValue);
+                    break;
+                case '^':
+                    if (previousInput) {
+                        result = Math.pow(parseFloat(previousInput), inputValue);
+                        previousInput = '';
+                    } else {
+                        return;
+                    }
+                    break;
+                case '10^':
+                    result = Math.pow(10, inputValue);
+                    break;
+                case 'e^':
+                    result = Math.exp(inputValue);
+                    break;
+                case 'rand':
+                    result = Math.random();
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = result.toString();
+            updateDisplay();
+            resetScreen = true;
+        }
+    </script>
+</body>
+</html>
