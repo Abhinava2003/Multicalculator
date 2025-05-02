@@ -2,15 +2,230 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Multi Calculator</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --border-radius: 12px;
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7ff;
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: var(--transition);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--primary-light);
+      transform: scale(1.1);
+    }
+
+    h1.title {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--gray);
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .panel-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 30px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--dark);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid rgba(67, 97, 238, 0.1);
+    }
+
+    .panel:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+      border-color: var(--primary);
+    }
+
+    .panel i {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .panel h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .panel p {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .panel {
+      background: #1e1e1e;
+      border-color: #333;
+    }
+
+    body.dark-mode .subtitle,
+    body.dark-mode .panel p {
+      color: #aaa;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1.title {
+        font-size: 2rem;
+      }
+      
+      .panel-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1.title {
+        font-size: 1.8rem;
+      }
+      
+      .header {
+        margin-bottom: 20px;
+      }
+      
+      .panel {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1 class="title">Multi-Calculator Website</h1>
-  <div class="panel-container">
-    <a href="simple.html" class="panel">Simple Calculator</a>
-    <a href="scientific.html" class="panel">Scientific Calculator</a>
-    <a href="converter.html" class="panel">Converter</a>
+  <div class="header">
+    <button class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i>
+    </button>
+    <h1 class="title">Multi-Calculator</h1>
+    <p class="subtitle">Choose your calculator tool</p>
   </div>
+
+  <div class="panel-container">
+    <a href="simple.html" class="panel">
+      <i class="fas fa-calculator"></i>
+      <h2>Simple Calculator</h2>
+      <p>Basic arithmetic operations</p>
+    </a>
+    
+    <a href="scientific.html" class="panel">
+      <i class="fas fa-square-root-alt"></i>
+      <h2>Scientific Calculator</h2>
+      <p>Advanced math functions</p>
+    </a>
+    
+    <a href="converter.html" class="panel">
+      <i class="fas fa-exchange-alt"></i>
+      <h2>Unit Converter</h2>
+      <p>Convert between units</p>
+    </a>
+  </div>
+
+  <script>
+    // Theme functionality
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Check for saved theme preference or use preferred color scheme
+    function applyThemePreference() {
+      const preferredTheme = localStorage.getItem('themePreference') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      
+      if (preferredTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+    }
+    
+    // Toggle theme
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('themePreference', isDark ? 'dark' : 'light');
+      themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    
+    // Event listeners
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Apply theme on load
+    document.addEventListener('DOMContentLoaded', applyThemePreference);
+  </script>
 </body>
 </html>
